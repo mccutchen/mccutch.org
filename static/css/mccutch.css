@@ -22,16 +22,11 @@ h1 {
     color: #ccc;
     font-family: League Gothic;
     font-size: 8em;
-    text-transform: uppercase;
     text-align: center;
     margin: 1em auto;
     padding: 0;
-    white-space: nowrap;
-    text-shadow: 3px 3px 3px #222;
+    /*text-shadow: 3px 3px 3px #900;*/
 }
 h1 span.first.name {
     color: #fff;
-}
-h1 span.last.name span {
-    text-transform: lowercase;
 }
