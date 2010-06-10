@@ -9,6 +9,9 @@ $(document).ready(function() {
     var x, y, b;
     var color = '#222';
 
+    // Rotation in degrees
+    var d = 0;
+
     // Loop through each span, gathering its text up and then clearing it out
     // in preparation for replacement by the same text with shadows applied.
     spans.each(function(i, span) {
@@ -21,8 +24,13 @@ $(document).ready(function() {
         $.each(text, function(i, c) {
             // For now, they're each equal to the current velocity
             x = y = b = v;
-            var shadow = color + ' ' + x + 'px ' + y + 'px ' + b + 'px';
-            span.append($('<span style="text-shadow: ' + shadow + ';">' + c + '</span>'));
+            d = v/2;
+            var styles = {
+                'text-shadow': color + ' ' + x + 'px ' + y + 'px ' + b + 'px',
+                '-webkit-transform': 'rotate(' + d + 'deg)',
+                '-moz-transform': 'rotate(' + d + 'deg)'
+            }
+            span.append($('<span>' + c + '</span>').css(styles));
             v += a;
         });
     });

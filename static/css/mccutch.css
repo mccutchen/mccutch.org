@@ -27,6 +27,12 @@ h1 {
     padding: 0;
     /*text-shadow: 3px 3px 3px #900;*/
 }
+h1 span span {
+    display: inline-block;
+    position: relative;
+    -webkit-transform-origin: bottom left;
+    -moz-transform-origin: bottom left;
+}
 h1 span.first.name {
     color: #fff;
 }
