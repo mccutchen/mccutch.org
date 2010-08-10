@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     // Shadow's x offset, y offset, blur
     var x, y, b;
-    var color = '#222';
+    var color = '#111';
 
     // Rotation in degrees
     var d = 0;
