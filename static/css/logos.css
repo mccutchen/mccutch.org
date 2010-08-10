@@ -1,0 +1,22 @@
+body {
+	background-color: #fff;
+	margin: 0;
+	padding: 0;
+}
+
+h1.logo {
+	margin: 20px;
+	padding: 0;
+}
+
+h1.logo img {
+	display: block;
+	margin: 0;
+	padding: 12px 8px;
+	background: #ccc no-repeat;
+}
+
+h1.logo.a img { background-image: url(../img/logo/a.png); }
+h1.logo.b img { background-image: url(../img/logo/b.png); }
+h1.logo.c img { background-image: url(../img/logo/c.png); }
+h1.logo.d img { background-image: url(../img/logo/d.png); }
