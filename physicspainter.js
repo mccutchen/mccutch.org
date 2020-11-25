@@ -9,12 +9,30 @@ const RunSketch = (function () {
 
             this.x = rand(0, w);
             this.y = rand(0, h);
+            this.dx = 0;
+            this.dy = 0;
             this.step();
         }
         step() {
-            this.x += rand(-this.range, this.range);
-            this.y += rand(-this.range, this.range);
+            if (Math.random() < 0.5) {
+                this.dx = rand(-this.range, this.range);
+                this.dy = rand(-this.range, this.range);
+            }
 
+            this.x += this.dx;
+            this.y += this.dy;
+        }
+        constrain() {
+            // this.wrap();
+            this.bounce();
+        }
+        bounce() {
+            if (this.x < 0) { this.x *= -1; }
+            if (this.x > this.w) { this.x -= this.w % this.x; }
+            if (this.y < 0) { this.y *= -1; }
+            if (this.y > this.h) { this.y -= this.h % this.y; }
+        }
+        wrap() {
             if (this.x < 0) { this.x += this.w; }
             if (this.x > this.w) { this.x %= this.w; }
             if (this.y < 0) { this.y += this.h; }
@@ -23,7 +41,8 @@ const RunSketch = (function () {
     }
 
     class Chaser {
-        constructor(w, h, target, f, e, r) {
+        constructor(color, target, w, h, f, e, r) {
+            this.color = color;
             this.target = target;
             this.f = f; // friction
             this.e = e; // elasticity
@@ -70,6 +89,24 @@ const RunSketch = (function () {
     }
 
     function render(ctx, w, h, targets, chasers) {
+        for (var chaser of chasers) {
+            let lineWidth = Math.min((Math.abs(chaser.vx) + Math.abs(chaser.vy) * 0.75 | 0), 30);
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = chaser.color;
+
+            let lastx = (chaser.lastx | 0) - lineWidth;
+            let lasty = (chaser.lasty | 0) - lineWidth;
+            let x = (chaser.x | 0) - lineWidth;
+            let y = (chaser.y | 0) - lineWidth;
+
+            ctx.beginPath();
+            ctx.moveTo(lastx, lasty);
+            ctx.lineTo(x, y);
+            ctx.stroke()
+        }
+    }
+
+    function debugRender(ctx, w, h, targets, chasers) {
         ctx.fillStyle = '#eee';
         ctx.fillRect(0, 0, w, h);
 
@@ -110,13 +147,13 @@ const RunSketch = (function () {
         const h = canvas.height;
 
         const targets = [];
-        let target = new Target(w, h, 150);
+        let target = new Target(w, h, 100);
         targets.push(target);
 
         const chasers = [];
-        chasers.push(new Chaser(w, h, target, 50, 1.1, 10));
-        chasers.push(new Chaser(w, h, target, 70, 1.08, 10));
-        chasers.push(new Chaser(w, h, target, 40, 1.12, 10));
+        chasers.push(new Chaser('#f372cc', target, w, h, 150, 1.1, 5));
+        chasers.push(new Chaser('#f8961e', target, w, h, 170, 1.08, 5));
+        chasers.push(new Chaser('#f9c74f', target, w, h, 140, 1.12, 5));
 
         const targetInterval = 500;
         const chaserInterval = 20;
