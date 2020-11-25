@@ -30,7 +30,9 @@ const RunSketch = (function () {
             this.r = r; // repulsion
 
             this.x = (w / 2) + rand(-20, 20);
-            this.y = h / 2 + rand(-20, 20);
+            this.y = (h / 2) + rand(-20, 20);
+            this.lastx = this.x;
+            this.lasty = this.y;
             this.vx = 0;
             this.vy = 0;
         }
@@ -49,17 +51,19 @@ const RunSketch = (function () {
                 if (this === other) {
                     continue;
                 }
-                dx = Math.abs(other.x - this.x);
-                dy = Math.abs(other.y - this.y);
-                if (dx < this.r) {
-                    this.vx = (this.vx + (dx / this.f)) / this.e;
+                dx = other.x - this.x;
+                dy = other.y - this.y;
+                if (Math.abs(dx) < this.r) {
+                    this.vx = (this.vx - (dx / this.f)) / this.e;
                 }
-                if (dy < this.r) {
-                    this.vy = (this.vy + (dy / this.f)) / this.e;
+                if (Math.abs(dy) < this.r) {
+                    this.vy = (this.vy - (dy / this.f)) / this.e;
                 }
             }
 
             // adjust position
+            this.lastx = this.x;
+            this.lasty = this.y;
             this.x += this.vx;
             this.y += this.vy;
         }
@@ -106,14 +110,13 @@ const RunSketch = (function () {
         const h = canvas.height;
 
         const targets = [];
-        const chasers = [];
-
-        let target = new Target(w, h, 100);
+        let target = new Target(w, h, 150);
         targets.push(target);
 
-        for (var i = 0; i < 3; i++) {
-            chasers.push(new Chaser(w, h, target, 150, 1.9, 0));
-        }
+        const chasers = [];
+        chasers.push(new Chaser(w, h, target, 50, 1.1, 10));
+        chasers.push(new Chaser(w, h, target, 70, 1.08, 10));
+        chasers.push(new Chaser(w, h, target, 40, 1.12, 10));
 
         const targetInterval = 500;
         const chaserInterval = 20;
