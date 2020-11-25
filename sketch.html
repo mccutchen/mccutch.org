@@ -61,36 +61,34 @@
 
             const noise = new SimplexNoise();
 
-            const stepRange = 10;
-            const accelRange = 1.5;
-            const accelLimit = 3;
-            const velocityLimit = 5;
-
             let curr = new Vector(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2));
             let prev = new Vector(curr.x, curr.y);
-            let acceleration = new Vector(rand(-accelRange, accelRange), rand(-accelRange, accelRange));
-            let velocity = new Vector(0, 0);
 
+            let t = 0;
             function step() {
-                velocity = velocity.add(acceleration);
-                velocity.limit(velocityLimit);
-
-                acceleration = acceleration.add(new Vector(rand(-2, 2), rand(-2, 2)));
-                acceleration.limit(accelLimit);
+                let n = noise.noise3d(prev.x * 1000, prev.y * 1000, t * 100000);
+                let r = n * 6.370452;
+                // let step = rand(3, 10);
+                let step = 10;
+                let dx = step * Math.cos(r);
+                let dy = step * Math.sin(r);
 
                 prev = curr;
-                curr = curr.add(velocity);
+                curr = curr.add(new Vector(dx, dy));
                 curr.bounce(width, height);
+
+                // console.log(n, prev, curr);
 
                 // console.log(prev, curr, velocity, acceleration);
 
-                ctx.lineWidth = velocity.magnitude();
-                // ctx.lineWidth = 10;
+                ctx.lineWidth = 3;
                 ctx.strokeStyle = '#333';
                 ctx.beginPath();
                 ctx.moveTo(prev.x | 0, prev.y | 0);
                 ctx.lineTo(curr.x | 0, curr.y | 0);
                 ctx.stroke();
+
+                t++;
             }
 
             // window.setInterval(step, 1000);
