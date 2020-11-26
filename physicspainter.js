@@ -6,10 +6,13 @@ const RunSketch = (function () {
     const TARGET_STEP_PROBABILITY = 0.75;
     const TARGET_LEAP_PROBABILITY = 0.05;
 
-    const RENDER_MIN_LINE_WIDTH = 6;
-    const RENDER_MAX_LINE_WIDTH = 50;
-    const RENDER_LINE_WIDTH_FACTOR = 10;
+    const RENDER_MIN_LINE_WIDTH = 4;
+    const RENDER_MAX_LINE_WIDTH = 40;
+    const RENDER_LINE_WIDTH_FACTOR = 0.8;
+    const RENDER_DEBUG = false;
 
+    const CHASER_FRICTION = 150;
+    const CHASER_ELASTICITY = 1.1;
     const CHASER_REPULSION = RENDER_MIN_LINE_WIDTH;
 
     // https://coolors.co/ffe0e9-ffc2d4-ff9ebb-ff7aa2-e05780-b9375e-8a2846-602437-522e38
@@ -34,25 +37,35 @@ const RunSketch = (function () {
         const h = canvas.height;
 
         const targets = [];
-        let target = new Target(w, h);
-        targets.push(target);
-
         const chasers = [];
-        chasers.push(new Chaser(target, w, h, 150, 1.1, CHASER_REPULSION));
-        chasers.push(new Chaser(target, w, h, 170, 1.08, CHASER_REPULSION));
-        chasers.push(new Chaser(target, w, h, 140, 1.12, CHASER_REPULSION));
+
+        // We have two tiers of targets: This meta-target is a random walker,
+        // used as the target for a tier of chasers that are treated as targets
+        // for a second tier of chasers. Only the second tier of chasers is
+        // rendered.
+        //
+        // This takes advantage of the fact that a target need only have x and
+        // y properties and a step(t) method to arrange for more complex
+        // motion.
+        const metaTarget = new Target(w, h);
+        targets.push(metaTarget);
+
+        for (let i = 0; i < 3; i++) {
+            let target = new Chaser(metaTarget, w, h, CHASER_FRICTION * 0.1, 1.00, 100);
+            let chaser = new Chaser(target, w, h, CHASER_FRICTION, CHASER_ELASTICITY, CHASER_REPULSION);
+            targets.push(target);
+            chasers.push(chaser);
+        }
 
         const renderer = new Renderer(ctx, w, h, targets, chasers);
 
         (function loop(t) {
             window.requestAnimationFrame(function frame() {
-                if (t % TARGET_STEP_PERIOD === 0) {
-                    for (var target of targets) {
-                        target.step();
-                    }
+                for (let target of targets) {
+                    target.step(t, targets);
                 }
-                for (var chaser of chasers) {
-                    chaser.step(chasers);
+                for (let chaser of chasers) {
+                    chaser.step(t, chasers);
                 }
                 renderer.render(t);
                 loop(t + 1);
@@ -72,7 +85,12 @@ const RunSketch = (function () {
             this.dx = 0;
             this.dy = 0;
         }
-        step() {
+        step(t) {
+            // only step every N frames
+            if (t % TARGET_STEP_PERIOD !== 0) {
+                return;
+            }
+
             // only change direction on a subset of steps
             if (Math.random() < TARGET_STEP_PROBABILITY) {
                 let range = TARGET_STEP_RANGE;
@@ -126,7 +144,7 @@ const RunSketch = (function () {
             this.vy = 0;
         }
 
-        step(others) {
+        step(t, others) {
             // find distance to target
             let dx = this.target.x - this.x;
             let dy = this.target.y - this.y;
@@ -178,7 +196,14 @@ const RunSketch = (function () {
             let ctx = this.ctx;
             let chasers = this.chasers;
 
-            // ctx.globalCompositeOperation = "darken";
+            ctx.globalCompositeOperation = "source-over";
+            if (t % 10 === 0) {
+                // ctx.save()
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.01)';
+                ctx.fillRect(0, 0, this.w, this.h);
+                // ctx.restore();
+            }
+
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             for (let i = 0; i < chasers.length; i++) {
@@ -203,6 +228,16 @@ const RunSketch = (function () {
 
                 this.lastx[i] = chaser.x;
                 this.lasty[i] = chaser.y;
+            }
+
+            if (RENDER_DEBUG) {
+                let targetSize = 2;
+                let targetOffset = targetSize / 2;
+                let targetColor = '#333';
+                ctx.fillStyle = targetColor;
+                for (let target of this.targets) {
+                    ctx.fillRect(target.x - targetOffset, target.y - targetOffset, targetSize, targetSize);
+                }
             }
         }
     }
