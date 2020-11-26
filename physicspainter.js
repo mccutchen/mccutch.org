@@ -26,11 +26,7 @@ const RunSketch = (function () {
 
     // Entrypoint
     function RunSketch(canvas) {
-        const ctx = canvas.getContext("2d");
-        setupCanvas(canvas);
-
-        const w = canvas.width;
-        const h = canvas.height;
+        const [ctx, w, h] = setupCanvas(canvas);
 
         const targets = [];
         const chasers = [];
@@ -267,9 +263,15 @@ const RunSketch = (function () {
     }
 
     function setupCanvas(canvas) {
-        var rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
+        let dpr = window.devicePixelRatio || 1;
+        let rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+
+        let ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        return [ctx, rect.width, rect.height];
     }
 
     function rand(min, max) {
