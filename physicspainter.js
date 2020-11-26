@@ -1,20 +1,27 @@
 const RunSketch = (function () {
     'use strict';
 
-    const TARGET_STEP_RANGE = 25;
-    const TARGET_STEP_PERIOD = 1;
-    const TARGET_STEP_PROBABILITY = 0.75;
-    const TARGET_LEAP_PROBABILITY = 0.05;
+    const TARGET_STEP_RANGE = 25; // how far can a target step in one direction
+    const TARGET_STEP_PERIOD = 2; // number of time ticks that pass between steps, to decouple target updates from chaser updates
+    const TARGET_CHANGE_PROBABILITY = 0.75; // probability that a target will change direction
+    const TARGET_LEAP_PROBABILITY = 0.1; // probability that a target will take a larger step
 
     const RENDER_MIN_LINE_WIDTH = 4;
     const RENDER_MAX_LINE_WIDTH = 40;
-    const RENDER_LINE_WIDTH_FACTOR = 0.8;
-    const RENDER_DEBUG = false;
+    const RENDER_LINE_WIDTH_FACTOR = 0.8; // makes line width proportional to chaser velocity
+    const RENDER_DEBUG = false; // render targets in addition to chasers
 
+    const CHASER_COUNT = 5;
     const CHASER_FRICTION = 150;
     const CHASER_ELASTICITY = 1.1;
     const CHASER_REPULSION = RENDER_MIN_LINE_WIDTH;
 
+    const JITTER_FRICTION = CHASER_FRICTION * 0.1;
+    const JITTER_ELASTICITY = CHASER_ELASTICITY * 0.1;
+    const JITTER_REPULSTION = CHASER_REPULSION * 0.1;
+
+    // Initial palette is pink:
+    // https://coolors.co/ffc2d4-ff99b8-ff5c8d-ff3374-ff709b-ff99b8
     const COLORS = [
         [342, 100, 88],
         [342, 100, 80],
@@ -31,26 +38,45 @@ const RunSketch = (function () {
         const targets = [];
         const chasers = [];
 
-        // We have two tiers of targets: This meta-target is a random walker,
-        // used as the target for a tier of chasers that are treated as targets
-        // for a second tier of chasers. Only the second tier of chasers is
-        // rendered.
+        // We have two tiers of targets: This "root" target is a normal random
+        // walker, chased by a tier of "meta target" chasers that are in turn
+        // treated as targets for the final tier of rendered chasers.
         //
-        // This takes advantage of the fact that a target need only have x and
-        // y properties and a step(t) method to arrange for more complex
-        // motion.
-        const metaTarget = new Target(w, h);
-        targets.push(metaTarget);
+        // This takes advantage of the fact that a chaser can itself be used as
+        // a target, since a target need to have x and y properties and a
+        // step(t) method, and allows for more complex motion.
+        const target = new Target(w, h);
+        targets.push(target);
 
-        for (let i = 0; i < 3; i++) {
-            let target = new Chaser(metaTarget, w, h, CHASER_FRICTION * 0.1, 1.00, 100);
-            let chaser = new Chaser(target, w, h, CHASER_FRICTION, CHASER_ELASTICITY, CHASER_REPULSION);
-            targets.push(target);
+        // For each chaser, we build a meta target that chases the target, and
+        // use that as the target for the chaser that will be rendered. Only
+        // chasers added to the chasers array will be rendered.
+        for (let i = 0; i < CHASER_COUNT; i++) {
+            let metaTarget = new Chaser(
+                target,
+                w,
+                h,
+                jittered(CHASER_FRICTION * 0.1, JITTER_FRICTION),
+                jittered(1.00, JITTER_ELASTICITY),
+                jittered(100, JITTER_REPULSTION),
+            );
+            targets.push(metaTarget);
+
+            let chaser = new Chaser(
+                metaTarget,
+                w,
+                h,
+                jittered(CHASER_FRICTION, JITTER_FRICTION),
+                jittered(CHASER_ELASTICITY, JITTER_ELASTICITY),
+                jittered(CHASER_REPULSION, JITTER_REPULSTION),
+            );
             chasers.push(chaser);
         }
 
         const renderer = new Renderer(ctx, w, h, targets, chasers);
 
+        // Kick off our animation loop, which calls itself recursively using
+        // requestAnimationFrame.
         (function loop(t) {
             window.requestAnimationFrame(function frame() {
                 for (let target of targets) {
@@ -83,23 +109,28 @@ const RunSketch = (function () {
                 return;
             }
 
-            // only change direction on a subset of steps
-            if (Math.random() < TARGET_STEP_PROBABILITY) {
+            // only change direction on a subset of frames, and only take a
+            // larger step on a subset of that subset.
+            if (Math.random() < TARGET_CHANGE_PROBABILITY) {
                 let range = TARGET_STEP_RANGE;
                 if (Math.random() < TARGET_LEAP_PROBABILITY) {
-                    range *= 4;
+                    range *= 5;
                 }
                 this.dx = rand(-range, range);
                 this.dy = rand(-range, range);
             }
+
             this.x += this.dx;
             this.y += this.dy;
             this.constrain();
         }
+
+        // constrain the position of the target
         constrain() {
             this.bounce();
-            // this.teleport();
         }
+
+        // constrain the position of the target by bouncing off of the walls
         bounce() {
             if (this.x < 0) {
                 this.x *= -1;
@@ -175,8 +206,6 @@ const RunSketch = (function () {
             this.chasers = chasers;
             this.palette = new Palette(this.chasers);
 
-            console.log('palette', this.palette);
-
             // track last position of each chaser
             this.lastx = this.chasers.map(chaser => chaser.x);
             this.lasty = this.chasers.map(chaser => chaser.y);
@@ -186,6 +215,14 @@ const RunSketch = (function () {
             let ctx = this.ctx;
             let chasers = this.chasers;
 
+            ctx.save();
+
+            // update color palette
+            this.palette.step(t);
+
+            // gradually fade the background to white (though for unclear
+            // reasons it never goes to white as intended and instead always
+            // leaves some muted remnants of the past)
             if (t % 5 === 0) {
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.01)';
                 ctx.fillRect(0, 0, this.w, this.h);
@@ -228,7 +265,7 @@ const RunSketch = (function () {
             }
 
             this.renderLogo(ctx);
-            this.palette.step(t);
+            ctx.restore();
         }
 
         renderLogo(ctx) {
@@ -276,6 +313,10 @@ const RunSketch = (function () {
 
     function rand(min, max) {
         return (Math.random() * (max - min) + min) | 0;
+    }
+
+    function jittered(n, amount) {
+        return n + (rand(-1, 1) * amount);
     }
 
     return RunSketch;
