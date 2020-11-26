@@ -1,9 +1,10 @@
 const RunSketch = (function () {
     'use strict';
 
-    const TARGET_STEP_RANGE = 50;
-    const TARGET_STEP_PERIOD = 20;
+    const TARGET_STEP_RANGE = 25;
+    const TARGET_STEP_PERIOD = 1;
     const TARGET_STEP_PROBABILITY = 0.75;
+    const TARGET_LEAP_PROBABILITY = 0.05;
 
     const RENDER_MIN_LINE_WIDTH = 6;
     const RENDER_MAX_LINE_WIDTH = 50;
@@ -20,7 +21,7 @@ const RunSketch = (function () {
         const h = canvas.height;
 
         const targets = [];
-        let target = new Target(w, h, TARGET_STEP_RANGE, TARGET_STEP_PROBABILITY);
+        let target = new Target(w, h);
         targets.push(target);
 
         const chasers = [];
@@ -44,23 +45,27 @@ const RunSketch = (function () {
         })(0);
     }
 
+    // Target models a biased random walk that only changes direction on a % of
+    // steps. Targets serve as the target towards which chasers travel.
     class Target {
-        constructor(w, h, range, stepProbability) {
+        constructor(w, h) {
             this.w = w;
             this.h = h;
-            this.range = range;
-            this.stepProbability = stepProbability;
 
-            this.x = (w / 2) + rand(-this.range, this.range);
-            this.y = (h / 2) + rand(-this.range, this.range);
+            this.x = (w / 2) + rand(-TARGET_STEP_RANGE, TARGET_STEP_RANGE);
+            this.y = (h / 2) + rand(-TARGET_STEP_RANGE, TARGET_STEP_RANGE);
             this.dx = 0;
             this.dy = 0;
-            this.step();
         }
         step() {
-            if (Math.random() < this.stepProbability) {
-                this.dx = rand(-this.range, this.range);
-                this.dy = rand(-this.range, this.range);
+            // only change direction on a subset of steps
+            if (Math.random() < TARGET_STEP_PROBABILITY) {
+                let range = TARGET_STEP_RANGE;
+                if (Math.random() < TARGET_LEAP_PROBABILITY) {
+                    range *= 4;
+                }
+                this.dx = rand(-range, range);
+                this.dy = rand(-range, range);
             }
             this.x += this.dx;
             this.y += this.dy;
@@ -68,6 +73,7 @@ const RunSketch = (function () {
         }
         constrain() {
             this.bounce();
+            // this.teleport();
         }
         bounce() {
             if (this.x < 0) {
@@ -93,8 +99,17 @@ const RunSketch = (function () {
             if (this.y < 0) { this.y += this.h; }
             if (this.y > this.h) { this.y %= this.h; }
         }
+        teleport() {
+            if (this.x < 0 || this.x > this.w || this.y < 0 || this.y > this.h) {
+                this.x = rand(0, this.w);
+                this.y = rand(0, this.h);
+            }
+        }
     }
 
+    // Chaser models a point that always moves towards a given target with its
+    // movement governed by a crude physics implementation based on friction,
+    // elasticity, and repulsion parameters.
     class Chaser {
         constructor(color, target, w, h, f, e, r) {
             this.color = color;
@@ -116,11 +131,11 @@ const RunSketch = (function () {
             let dx = this.target.x - this.x;
             let dy = this.target.y - this.y;
 
-            // adjust velocity based on distance to target
+            // calculate velocity based on distance to target
             this.vx = (this.vx + (dx / this.f)) / this.e;
             this.vy = (this.vy + (dy / this.f)) / this.e;
 
-            // add repulsion
+            // steer away from other chasers
             for (var other of others) {
                 if (this === other) {
                     continue;
@@ -144,6 +159,7 @@ const RunSketch = (function () {
     }
 
     function render(ctx, w, h, targets, chasers) {
+        ctx.globalCompositeOperation = "darken";
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         for (var chaser of chasers) {
@@ -160,29 +176,6 @@ const RunSketch = (function () {
             ctx.moveTo(lastx, lasty);
             ctx.lineTo(x, y);
             ctx.stroke()
-        }
-    }
-
-    function debugRender(ctx, w, h, targets, chasers) {
-        ctx.fillStyle = '#eee';
-        ctx.fillRect(0, 0, w, h);
-
-        const targetSize = 4;
-        const targetOffset = targetSize / 2;
-        for (var target of targets) {
-            let x = (target.x | 0) - targetOffset;
-            let y = (target.y | 0) - targetOffset;
-            ctx.fillStyle = '#900';
-            ctx.fillRect(x, y, targetSize, targetSize);
-        }
-
-        const chaserSize = 8;
-        const chaserOffset = chaserSize / 2;
-        for (var chaser of chasers) {
-            let x = (chaser.x | 0) - chaserOffset;
-            let y = (chaser.y | 0) - chaserOffset;
-            ctx.fillStyle = '#333';
-            ctx.fillRect(x, y, chaserSize, chaserSize);
         }
     }
 
