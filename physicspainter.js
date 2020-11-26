@@ -15,18 +15,14 @@ const RunSketch = (function () {
     const CHASER_ELASTICITY = 1.1;
     const CHASER_REPULSION = RENDER_MIN_LINE_WIDTH;
 
-    // https://coolors.co/ffe0e9-ffc2d4-ff9ebb-ff7aa2-e05780-b9375e-8a2846-602437-522e38
     const COLORS = [
-        "#fadde1",
-        "#ffc4d6",
-        "#ffa6c1",
-        "#ff87ab",
-        "#ff5d8f",
-        "#ff97b7",
-        "#ffacc5",
-        "#ffcad4",
-        "#f4acb7",
-    ];
+        [342, 100, 88],
+        [342, 100, 80],
+        [342, 100, 68],
+        [341, 100, 60],
+        [342, 100, 72],
+        [342, 100, 80],
+    ]
 
     // Entrypoint
     function RunSketch(canvas) {
@@ -181,11 +177,9 @@ const RunSketch = (function () {
             this.h = h;
             this.targets = targets;
             this.chasers = chasers;
+            this.palette = new Palette(this.chasers);
 
-            // Pick a color for each chaser
-            this.palette = this.chasers.map((chaser, i) => {
-                return COLORS[Math.floor(Math.random() * COLORS.length)];
-            });
+            console.log('palette', this.palette);
 
             // track last position of each chaser
             this.lastx = this.chasers.map(chaser => chaser.x);
@@ -196,21 +190,18 @@ const RunSketch = (function () {
             let ctx = this.ctx;
             let chasers = this.chasers;
 
-            ctx.globalCompositeOperation = "source-over";
-            if (t % 10 === 0) {
-                // ctx.save()
+            if (t % 5 === 0) {
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.01)';
                 ctx.fillRect(0, 0, this.w, this.h);
-                // ctx.restore();
             }
 
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             for (let i = 0; i < chasers.length; i++) {
                 let chaser = chasers[i];
-                let color = this.palette[i];
                 let lastx = this.lastx[i];
                 let lasty = this.lasty[i];
+                let color = this.palette.get(i);
 
                 let lineWidth = Math.max(RENDER_MIN_LINE_WIDTH, Math.min((Math.abs(chaser.vx) + Math.abs(chaser.vy) * RENDER_LINE_WIDTH_FACTOR), RENDER_MAX_LINE_WIDTH)) | 0;
                 ctx.lineWidth = lineWidth;
@@ -239,6 +230,39 @@ const RunSketch = (function () {
                     ctx.fillRect(target.x - targetOffset, target.y - targetOffset, targetSize, targetSize);
                 }
             }
+
+            this.renderLogo(ctx);
+            this.palette.step(t);
+        }
+
+        renderLogo(ctx) {
+            ctx.font = "bold 2em 'Helvetica Neue', helvetica, sans-serif";
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#fff';
+            ctx.fillText('HOWDY', this.w / 2, this.h / 2);
+        }
+    }
+
+    class Palette {
+        constructor(chasers) {
+            // Pick a color for each chaser
+            this.colors = chasers.map((_, i) => {
+                return COLORS[i % COLORS.length]; s
+            });
+        }
+        get(id) {
+            let [h, s, l] = this.colors[id % this.colors.length];
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+        step(t) {
+            if (t % 3 != 0) {
+                return;
+            }
+            this.colors = this.colors.map(([h, s, l]) => {
+                let d = rand(-2, 2) | 0;
+                return [h + d, s, l];
+            });
         }
     }
 
