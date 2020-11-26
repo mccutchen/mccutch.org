@@ -29,6 +29,8 @@ const RunSketch = (function () {
         chasers.push(new Chaser('#f8961e', target, w, h, 170, 1.08, CHASER_REPULSION));
         chasers.push(new Chaser('#f9c74f', target, w, h, 140, 1.12, CHASER_REPULSION));
 
+        const renderer = new Renderer(ctx, w, h, targets, chasers);
+
         (function loop(t) {
             window.requestAnimationFrame(function frame() {
                 if (t % TARGET_STEP_PERIOD === 0) {
@@ -39,7 +41,7 @@ const RunSketch = (function () {
                 for (var chaser of chasers) {
                     chaser.step(chasers);
                 }
-                render(ctx, w, h, targets, chasers);
+                renderer.render(t);
                 loop(t + 1);
             });
         })(0);
@@ -120,8 +122,6 @@ const RunSketch = (function () {
 
             this.x = (w / 2);
             this.y = (h / 2);
-            this.lastx = this.x;
-            this.lasty = this.y;
             this.vx = 0;
             this.vy = 0;
         }
@@ -151,31 +151,53 @@ const RunSketch = (function () {
             }
 
             // adjust position
-            this.lastx = this.x;
-            this.lasty = this.y;
             this.x += this.vx;
             this.y += this.vy;
         }
     }
 
-    function render(ctx, w, h, targets, chasers) {
-        ctx.globalCompositeOperation = "darken";
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        for (var chaser of chasers) {
-            let lineWidth = Math.max(RENDER_MIN_LINE_WIDTH, Math.min((Math.abs(chaser.vx) + Math.abs(chaser.vy) * RENDER_LINE_WIDTH_FACTOR), RENDER_MAX_LINE_WIDTH)) | 0;
-            ctx.lineWidth = lineWidth;
-            ctx.strokeStyle = chaser.color;
+    class Renderer {
+        constructor(ctx, w, h, targets, chasers) {
+            this.ctx = ctx;
+            this.w = w;
+            this.h = h;
+            this.targets = targets;
+            this.chasers = chasers;
 
-            let lastx = (chaser.lastx | 0) - lineWidth;
-            let lasty = (chaser.lasty | 0) - lineWidth;
-            let x = (chaser.x | 0) - lineWidth;
-            let y = (chaser.y | 0) - lineWidth;
+            // track last position of each chaser
+            this.lastx = this.chasers.map(chaser => chaser.x);
+            this.lasty = this.chasers.map(chaser => chaser.y);
+        }
 
-            ctx.beginPath();
-            ctx.moveTo(lastx, lasty);
-            ctx.lineTo(x, y);
-            ctx.stroke()
+        render(t) {
+            let ctx = this.ctx;
+            let chasers = this.chasers;
+
+            // ctx.globalCompositeOperation = "darken";
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            for (let i = 0; i < chasers.length; i++) {
+                let chaser = chasers[i];
+                let lastx = this.lastx[i];
+                let lasty = this.lasty[i];
+
+                let lineWidth = Math.max(RENDER_MIN_LINE_WIDTH, Math.min((Math.abs(chaser.vx) + Math.abs(chaser.vy) * RENDER_LINE_WIDTH_FACTOR), RENDER_MAX_LINE_WIDTH)) | 0;
+                ctx.lineWidth = lineWidth;
+                ctx.strokeStyle = chaser.color;
+
+                let x0 = lastx - lineWidth;
+                let y0 = lasty - lineWidth;
+                let x1 = chaser.x - lineWidth;
+                let y1 = chaser.y - lineWidth;
+
+                ctx.beginPath();
+                ctx.moveTo(x0 | 0, y0 | 0);
+                ctx.lineTo(x1 | 0, y1 | 0);
+                ctx.stroke()
+
+                this.lastx[i] = chaser.x;
+                this.lasty[i] = chaser.y;
+            }
         }
     }
 
