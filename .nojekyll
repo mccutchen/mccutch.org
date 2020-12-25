@@ -1,0 +1,2 @@
+Explicitly tell GitHub Pages that Jekyll is not used for this site, in an
+attempt to make https://mccutch.org/.well-known/keybase.txt reachable.
