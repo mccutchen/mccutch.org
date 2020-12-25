@@ -4,63 +4,49 @@ https://keybase.io/mccutchen
 
 I hereby claim:
 
-  * I am an admin of http://mccutch.org
+  * I am an admin of https://mccutch.org
   * I am mccutchen (https://keybase.io/mccutchen) on keybase.
-  * I have a public key with fingerprint C280 17A1 5056 9A15 5E8D  1016 B0C1 944A 52EF E3B6
+  * I have a public key ASB0pCMICPuluIAbyseKUDupLx2WFCFWIo_r6Kr4opIdggo
 
-To claim this, I am signing this object:
+To do so, I am signing this object:
 
 {
-    "body": {
-        "key": {
-            "fingerprint": "c28017a150569a155e8d1016b0c1944a52efe3b6",
-            "host": "keybase.io",
-            "key_id": "b0c1944a52efe3b6",
-            "uid": "8ea3290177eda255645ce61119e40500",
-            "username": "mccutchen"
-        },
-        "service": {
-            "hostname": "mccutch.org",
-            "protocol": "http:"
-        },
-        "type": "web_service_binding",
-        "version": 1
+  "body": {
+    "key": {
+      "eldest_kid": "01017cd84f4cfffad7673d8245cc785c5de9a4677da5c9e58f338cf203f778fe456e0a",
+      "host": "keybase.io",
+      "kid": "012074a4230808fba5b8801bcac78a503ba92f1d96142156228febe8aaf8a2921d820a",
+      "uid": "8ea3290177eda255645ce61119e40500",
+      "username": "mccutchen"
     },
-    "ctime": 1402618702,
-    "expire_in": 157680000,
-    "prev": "28b07501ba9d3af2a320d442ef2320d3f44067995ece8c6aea7c685eff434983",
-    "seqno": 2,
-    "tag": "signature"
+    "merkle_root": {
+      "ctime": 1608857198,
+      "hash": "b544a683e575f1cf1fb8fd8dd0000632755f7fe50f5ec4596367b94813f74cb5ec76c3aac955838c85e4cf1371fc458555149d7469194673381749126af8ac3f",
+      "hash_meta": "bd98a42c865e1603b0e48ad7dc9674c7f28063122191a87f5a43df38c4772181",
+      "seqno": 18498964
+    },
+    "service": {
+      "entropy": "rpl8oNKzm7BcKxn1C8q6SU0N",
+      "hostname": "mccutch.org",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "5.5.0"
+  },
+  "ctime": 1608857178,
+  "expire_in": 504576000,
+  "prev": "79570405945d460e94cdf4366b59fe80089b8f80957ab0f0015c9e2e00d12b98",
+  "seqno": 44,
+  "tag": "signature"
 }
 
-with the aforementioned key, yielding the PGP signature:
+which yields the signature:
 
------BEGIN PGP MESSAGE-----
-Version: Keybase OpenPGP v0.1.22
-Comment: https://keybase.io/crypto
-
-yML7AnicbZFvTBNnHMdbJmNWERBezBds3Q1RSQN317trr0wwgFsHKjoLQobA/Xna
-HspdvV4pfwLZ4v6IcZQwYIuoiXFDgoEgbJhlQe1GmOg0TiB1sSxsyBCmsMKCkAH6
-lGwvluzePPd8f5/v95tfnv7wF1QadZe3MfOd2fFe9a3rAZfq4On0fVUIK/EViKkK
-OQLWDqsg2oDskAVRQUwIhxtRzMBgJEpSNDxIYOQxFKNYlMNogmBIHFiBnqUQHWKX
-nEEHjGEZJ0gUJKjBS5HAQ/V/eNfawAgYPU7DDgPgGZwkKYLkAIVhGA0IlETRIOgE
-ssiUAkiXcpxL4exARKp1CJTLBA7KVWvd/0USJdkGvQ5ZUiROOgoHdkVxmII+pcIR
-BN2ALfonoogVRB7uDQ1lQHYKkoiYMEhyihDMxAgUpzCjAcV1CCh3CDIoEoIEaaCM
-KPyCNaAMRuJGFjWQKMYyNK9nrDhcDeUJAu6MB//0VoJAKQNNk4ADRo5iAGPgKCMJ
-rFZCT9BGPex3gmOihJhgk8LYYKRTsImM4pIBUv2dt2CdSq1RvRgaEnw5lWZ95L/v
-edYXqfq4I0U7XcObpy4XJ5sDnsY3hn84oO85j6b3fBTnF1PaZpIe9Womz0zlnmmL
-12mzKtGJ0IFqKSYz45LPemLXz1KeyftgTx8un3ttKLx42MJeoHQxP9aRW3aH36gP
-ndH+mXdQnhq5crZ2uuIPd2MT+fm0jKLjzfvTpt92el/f5Lu49cvRn8SYbw3JX7S4
-r5lPNbVSX18dH98StuoJHNEfKy+wRLkuVR/yS3khSdstts/opVRTlLUSRV7pxpse
-7xnMIdn8ZudcU9mAYciXn7xS25F8p3jm7lh9mjYue7nMcvIb/UBv4qd/7Xgrl/Bv
-7DnOpW36pf2TvCeHo7L2hq6fO5q23J1SG+ib33otrmRw4tXYl9PfM3/feQIkMytW
-9ZuHyu+e2z54+fHsyNipQP9c39hiwU5dSDz7tHqSv+5+lrHTXpqUE17S75jf3B7h
-97urvAnnT/pmpfvt2tLowoblsf7Atq8uMi/Nybs1s66O7KspnrQdN5oTHI8enl4Y
-qok+HDEftmtyUel23qysWUwoGL0Znxq2L7W1pHDlw/z88A9mM7uionMmflM/fLbU
-ENv1lKZyn/xaF3HH4/Jl5STtzb53u/NeRuH7YxtiF1ra7ptPbVw3XF94q8UT/eBK
-pLA6OmepLfn9wOZt79obOgN/X4iZRlZbU4/zS7e7NtQtzY+4Fxr2hz0HWDGYtw==
-=RcHx
------END PGP MESSAGE-----
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgdKQjCAj7pbiAG8rHilA7qS8dlhQhViKP6+iq+KKSHYIKp3BheWxvYWTESpcCLMQgeVcEBZRdRg6UzfQ2a1n+gAibj4CVerDwAVyeLgDRK5jEIFQkB0Qv0Y1lq1XjTo8rvf5DGYb0B2Sza3oiFBdO/qYdAgHCo3NpZ8RAb3325jIDNUgrnO7VM5IRv5IEQVPzT7UGbVu7Lrbhe+29eBA1N78B7PlP5koojjINNvZIFrYAOzBhF5ZUUgMCD6hzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIIp++DiO+YooErYvhNiAucEn6+ILeRzWavfwwN9XDEePo3RhZ80CAqd2ZXJzaW9uAQ==
 
 And finally, I am proving ownership of this host by posting or
 appending to this document.
