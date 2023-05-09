@@ -1,0 +1,117 @@
+
+Will McCutchen <will@mccutch.org>
+
+    117 Henry St #11
+    New York, NY 10002
+    214-926-8415
+
+
+Summary:
+
+    Programmer with extensive client- and server-side web development
+    experience and a strong interest in design, typography, and generative
+    art.
+
+Specialties:
+
+    Python, JavaScript, RESTful Web Services
+
+
+Experience:
+
+    Key Ingredient Corp.
+    Sr. Software Engineer
+    5/2009 - Present
+
+        * Ported a large, active, community-driven recipe sharing web site
+          from Django on EC2 to App Engine.
+
+        * Helped design and implement a RESTful HTTP API for each of our
+          services, used internally and by and third parties.
+
+        * Developed a storefront and backend system for displaying, selling,
+          and managing premium cookbooks as eBooks.
+
+        * Created a generic, flexible, reusable administrative backend used on
+          all of our App Engine services.
+
+        * Developed a testing infrastructure that allowed us to easily create
+          and run local integration tests for our services in a predictable,
+          repeatable way.
+
+        * Developed a web app to ease the process of internationalizing our
+          products in the face of shared translatable strings and various 
+          input and output formats for i18n data.
+
+    Brookhaven College
+    Technical Web Developer
+    10/2004 - 1/2007
+
+        * Managed the Brookhaven College Internet and intranet web sites in
+          coordination with content managers on campus.
+
+        * Designed and implemented custom software to streamline the creation
+          of the school’s course schedules and their publication in print and
+          on the web.
+
+        * Helped lead an effort to create and use a common XML format for
+          course schedule information across all seven Dallas County Community
+          College locations.
+
+        * Supervised the Location Web Developer.
+
+    Humor Tree Design Coalition
+    Freelance Web Developer
+    1/2000 - 12/2006
+
+        * Worked as a freelance web developer specializing in standards-
+          compliant, accessible, and beautiful web sites for clients such as
+          the Kings Highway Conservation District, Kimball Elementary School,
+          and Morley Interactive.
+
+        * Created custom CMS software in PHP & MySQL that could be easily
+          deployed on client sites.
+
+        * Created custom JavaScript library to facilitate easy cross-browser
+          “Dynamic HTML” effects in the dark days before jQuery et al.
+
+        * Handled all aspects of web site creation, from initial design of
+          Photoshop comps through to finished web site.
+
+
+Skills / Buzzwords:
+
+    Things I’m very good at and use constantly:
+
+        * Python
+        * Google App Engine
+        * Version control software (especially git)
+        * JavaScript
+        * HTML
+        * CSS
+        * REST / HATEOS
+
+    Things I’ve used extensively in the past but do not use so much any more:
+
+        * Django
+        * Java
+        * XML & XSLT
+        * SQL
+
+    Things I’d really like a chance to use more of:
+
+        * Clojure
+        * Node
+        * Haskell
+
+
+Education:
+
+    The University of Texas at Austin
+    BA, History
+
+
+See Also:
+
+    * http://github.com/mccutchen
+    * http://humortree.org/
